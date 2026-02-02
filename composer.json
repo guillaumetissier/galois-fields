@@ -1,0 +1,43 @@
+{
+  "name": "guillaumetissier/galois-fields",
+  "description": "A PHP library for working with Galois fields (finite fields)",
+  "type": "library",
+  "license": "MIT",
+  "keywords": ["galois", "finite-fields", "mathematics", "cryptography", "algebra"],
+  "authors": [
+    {
+      "name": "Guillaume Tissier",
+      "email": "guillaume.tissier@yahoo.com"
+    }
+  ],
+  "require": {
+    "php": "^8.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.0",
+    "phpstan/phpstan": "^1.10",
+    "squizlabs/php_codesniffer": "^3.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "Guillaumetissier\\GaloisFields\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Guillaumetissier\\GaloisFields\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit tests",
+    "stan": "phpstan analyse src tests --level=max",
+    "cs-check": "phpcs src tests --standard=PSR12",
+    "cs-fix": "phpcbf src tests --standard=PSR12"
+  },
+  "config": {
+    "sort-packages": true,
+    "optimize-autoloader": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
