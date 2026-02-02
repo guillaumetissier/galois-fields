@@ -194,4 +194,93 @@ final class BinaryExtensionField implements GaloisFieldInterface
     {
         return $this->log;
     }
+
+    /**
+     * Get the discrete logarithm of an element (returns the power n such that α^n = element)
+     *
+     * @param int $element The field element
+     * @return int The power n
+     * @throws \InvalidArgumentException if element is 0 or not in field
+     */
+    public function log(int $element): int
+    {
+        if ($element === 0) {
+            throw new \InvalidArgumentException('Logarithm of 0 is undefined');
+        }
+
+        if (!isset($this->log[$element])) {
+            throw new \InvalidArgumentException("Element $element is not in the field");
+        }
+
+        return $this->log[$element];
+    }
+
+    /**
+     * Get the element α^power (exponential in the field)
+     *
+     * @param int $power The power of alpha
+     * @return int The field element
+     */
+    public function exp(int $power): int
+    {
+        // Normalize power to [0, order-1)
+        $power = $power % ($this->order - 1);
+        if ($power < 0) {
+            $power += ($this->order - 1);
+        }
+
+        return $this->exp[$power];
+    }
+
+    /**
+     * Convert an element to its alpha power representation
+     *
+     * @param int $element The field element
+     * @return string The representation as "α^n" or "0" or "1"
+     */
+    public function toAlphaPower(int $element): string
+    {
+        if ($element === 0) {
+            return '0';
+        }
+
+        if ($element === 1) {
+            return 'α^0';
+        }
+
+        if (!isset($this->log[$element])) {
+            throw new \InvalidArgumentException("Element $element is not in the field");
+        }
+
+        $power = $this->log[$element];
+        return "α^$power";
+    }
+
+    /**
+     * Convert an alpha power string to its integer element value
+     *
+     * @param string $alphaPower The alpha power notation (e.g., "α^5", "1", "0")
+     * @return int The field element
+     * @throws \InvalidArgumentException if format is invalid
+     */
+    public function fromAlphaPower(string $alphaPower): int
+    {
+        if ($alphaPower === '0') {
+            return 0;
+        }
+
+        if ($alphaPower === '1') {
+            return 1;
+        }
+
+        // Parse "α^n" format
+        if (preg_match('/^(?:α|a|alpha)\^(-?\d+)$/u', $alphaPower, $matches)) {
+            $power = (int)$matches[1];
+            return $this->exp($power);
+        }
+
+        throw new \InvalidArgumentException(
+            "Invalid alpha power format: '$alphaPower'. Expected '0', '1', or 'α^n' where n is an integer."
+        );
+    }
 }

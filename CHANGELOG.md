@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-02-02
+
+### Added
+- **Discrete Logarithm Method**: `log(int $element): int`
+  - Returns the power n such that α^n = element
+  - Essential for converting elements to their exponential representation
+  - Example: `log(4)` returns `2` (because α^2 = 4)
+  - Throws `InvalidArgumentException` for 0 (logarithm undefined)
+- **Exponential Method**: `exp(int $power): int`
+  - Returns the element α^power
+  - Handles negative powers (α^-1 = α^254 in GF(256))
+  - Automatic normalization for powers outside [0, order-2]
+  - Example: `exp(5)` returns the element corresponding to α^5
+- **Alpha Power Representation**: Enhanced symbolic notation for GF(2^n) elements
+  - `toAlphaPower(int $element): string` - Convert element to α^n notation (e.g., 4 → "α^2")
+  - `fromAlphaPower(string $alphaPower): int` - Convert α^n string to integer element (BREAKING: now accepts string)
+  - Handles special cases: 0 → "0", 1 → "1" (canonical form α^0)
+  - Multiple input formats supported: `'α^5'`, `'a^5'`, `'alpha^5'`
+- **AlphaPowerTest**: Comprehensive test suite for alpha power conversion
+  - Round-trip conversion tests
+  - Cyclic property verification (α^255 = α^0 = 1 in GF(256))
+  - Multiplication and inverse in alpha notation
+  - Edge cases: negative powers, powers > order-1
+  - UTF-8 handling tests for Greek alpha character
+  - Tests for multiple input formats
+- **examplesAlpha.php**: Demonstration file showing:
+  - Element conversion to/from alpha notation
+  - New `log()` and `exp()` methods usage
+  - Why alpha powers simplify multiplication (α^a × α^b = α^(a+b))
+  - Multiplication tables in alpha notation
+  - Cyclic group properties
+
+### Technical Details
+- Alpha notation only available for binary extension fields GF(2^n)
+- Canonical representation: always uses smallest positive power [0, order-2]
+- Example: `toAlphaPower(1)` returns `"α^0"`, not `"α^255"`
+- Logarithm table is used for efficient conversion
+- `log()` and `exp()` are inverse operations: `exp(log(x)) = x`
+- Clear separation of concerns:
+  - `log()`/`exp()`: int ↔ int conversions (mathematical operations)
+  - `toAlphaPower()`/`fromAlphaPower()`: int ↔ string conversions (symbolic representation)
+
 ## [1.0.0] - 2025-02-02
 
 ### Added
