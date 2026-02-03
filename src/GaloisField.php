@@ -19,7 +19,7 @@ use InvalidArgumentException;
  *   $gf7 = new GaloisField(7);      // GF(7) prime field
  *   $result = $gf256->multiply(123, 45);
  */
-class GaloisField implements GaloisFieldInterface
+final class GaloisField implements GaloisFieldInterface
 {
     private GaloisFieldInterface $field;
 
@@ -46,6 +46,11 @@ class GaloisField implements GaloisFieldInterface
     public function getDegree(): int
     {
         return $this->field->getDegree();
+    }
+
+    public function isBinary(): bool
+    {
+        return $this->field->isBinary();
     }
 
     public function add(int $a, int $b): int
@@ -149,10 +154,6 @@ class GaloisField implements GaloisFieldInterface
      */
     public function toAlphaPower(int $element): string
     {
-        if (!$this->field instanceof BinaryExtensionField) {
-            throw new BadMethodCallException('toAlphaPower() is only available for binary extension fields GF(2^n)');
-        }
-
         return $this->field->toAlphaPower($element);
     }
 

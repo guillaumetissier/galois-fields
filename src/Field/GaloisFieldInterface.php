@@ -24,6 +24,16 @@ interface GaloisFieldInterface
      */
     public function getDegree(): int;
 
+    public function isBinary(): bool;
+
+    /**
+     * Convert an element to its alpha power representation (e.g., 4 → "α^2").
+     * Only meaningful for binary extension fields GF(2^n).
+     *
+     * @throws \BadMethodCallException if not a binary extension field
+     */
+    public function toAlphaPower(int $element): string;
+
     /**
      * Add two elements in the field
      */

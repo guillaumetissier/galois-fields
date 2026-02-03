@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-02-03
+
+### Added
+- **Polynomial support**: Polynomials with coefficients in any Galois field
+  - `PolynomialInterface` — shared contract between mutable and immutable variants
+  - `PolynomialImmutable` — every operation returns a new instance 
+  - `Polynomial` — in-place operations with fluent chaining
+  - `PolynomialFormatter` — string representation extracted into its own class (SRP)
+  - `PolynomialArithmetic` — higher-level operations: GCD, Lagrange interpolation, formal derivative
+
+#### PolynomialImmutable / Polynomial
+- Factory methods: `fromCoefficients()`, `zero()`, `one()`, `constant()`, `monomial()`
+- Arithmetic: `add()`, `sub()`, `mul()`, `scalarMul()`
+- Euclidean division: `divmod()` → `[quotient, remainder]`, `div()`, `mod()`
+- Evaluation: `evaluate(int $x)` using Horner's method (O(n))
+- Comparison: `equals()`
+- `Polynomial` additionally exposes setters: `setCoefficients()`, `setCoefficientAt()`
+
+#### PolynomialFormatter
+- `toString()` — human-readable representation: `"5x^2 + 3x + 7"`
+  - Leading coefficient 1 is omitted (`x^2`), zero coefficients are skipped
+- `toAlphaString()` — α^n notation for coefficients: `"α^25x^2 + α^1x + 1"`
+  - Restricted to GF(2^n) fields, throws `BadMethodCallException` otherwise
+- Works on any `PolynomialInterface` implementation (mutable or immutable)
+
+#### PolynomialArithmetic
+- `gcd(PolynomialInterface, PolynomialInterface): PolynomialImmutable`
+  - Euclidean algorithm, result is monic (leading coefficient = 1)
+  - Never mutates the input arguments (copies to immutable internally)
+- `areCoprime(): bool`
+- `multiEvaluate(PolynomialInterface, array $points): array`
+- `interpolate(array $xs, array $ys): PolynomialImmutable`
+  - Lagrange interpolation, unique polynomial of degree < n passing through the given points
+- `derivative(PolynomialInterface): PolynomialImmutable`
+  - Correct formal derivative in characteristic p (terms x^(kp) vanish)
+  - In GF(2^n) in particular: all even-degree terms disappear
+
+### Technical Details
+- Coefficients are stored in descending order: `[a_n, ..., a_1, a_0]`
+- Automatic normalization: leading zeros are stripped at construction time
+- `Polynomial::divmod()` returns `[new quotient, $this mutated as remainder]` — consistent with mutable semantics
+- `PolynomialImmutable::divmod()` returns two new instances
+- `PolynomialArithmetic` is agnostic to the concrete input type: mutable and immutable polynomials can be mixed freely
+- All polynomials validate that operands belong to the same field (`assertSameField`)
+
 ## [1.1.0] - 2025-02-02
 
 ### Added

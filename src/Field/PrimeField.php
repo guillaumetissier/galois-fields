@@ -32,6 +32,16 @@ final class PrimeField implements GaloisFieldInterface
         return 1;
     }
 
+    public function isBinary(): bool
+    {
+        return false;
+    }
+
+    public function toAlphaPower(int $element): string
+    {
+        throw new \BadMethodCallException('toAlphaPower() is only available for binary extension fields GF(2^n)');
+    }
+
     public function add(int $a, int $b): int
     {
         return ($a + $b) % $this->prime;

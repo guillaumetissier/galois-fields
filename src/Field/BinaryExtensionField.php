@@ -51,6 +51,11 @@ final class BinaryExtensionField implements GaloisFieldInterface
         return $this->degree;
     }
 
+    public function isBinary(): bool
+    {
+        return true;
+    }
+
     public function add(int $a, int $b): int
     {
         // Addition in GF(2^n) is XOR
