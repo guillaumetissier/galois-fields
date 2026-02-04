@@ -347,4 +347,17 @@ final class PolynomialImmutableTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $p1->add($p2);
     }
+
+    public function testSameOrderDifferentInstancesWork(): void
+    {
+        $gf256a = new GaloisField(256);
+        $gf256b = new GaloisField(256);
+
+        $p1 = PolynomialImmutable::fromCoefficients($gf256a, [5, 3]);
+        $p2 = PolynomialImmutable::fromCoefficients($gf256b, [2, 1]);
+        $result = $p1->add($p2);
+
+        $this->assertSame(7, $result->coefficientAt(1)); // 5 + 2 in GF(256)
+        $this->assertSame(2, $result->coefficientAt(0)); // 3 + 1 in GF(256)
+    }
 }

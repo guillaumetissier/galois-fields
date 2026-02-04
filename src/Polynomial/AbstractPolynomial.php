@@ -226,7 +226,7 @@ abstract class AbstractPolynomial implements PolynomialInterface
 
     protected function assertSameField(PolynomialInterface $other): void
     {
-        if ($this->field !== $other->field()) {
+        if ($this->field->getOrder() !== $other->field()->getOrder()) {
             throw new \InvalidArgumentException('Cannot operate on polynomials over different fields');
         }
     }
